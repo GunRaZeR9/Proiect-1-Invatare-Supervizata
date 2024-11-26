@@ -9,6 +9,8 @@ from NeuronalNetwork import initialize_weights, backpropagation, feedforward_for
 from DataManager import load_data
 import pandas as pd
 import warnings
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 # Global variables to store training and testing data, weights, epochs, and training errors
 X_train, Y_train, X_test, Y_test, weights, epochs, training_errors = None, None, None, None, None, None, []
@@ -115,6 +117,10 @@ class NeuralNetworkGUI:
         main_frame = ttk.Frame(root, padding="10")
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
+        # Initialize plot axes as instance variables
+        self.ax1 = None
+        self.ax2 = None
+        
         # Epochs input
         ttk.Label(main_frame, text="Epochs:").grid(row=0, column=0, sticky=tk.W, pady=5)
         self.epochs_var = tk.StringVar(value="9500")
@@ -133,9 +139,13 @@ class NeuralNetworkGUI:
         self.learning_rate_entry = ttk.Entry(main_frame, textvariable=self.learning_rate_var)
         self.learning_rate_entry.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=5)
         
+        # Load Data button
+        self.load_button = ttk.Button(main_frame, text="Load Data", command=Load_Data)
+        self.load_button.grid(row=3, column=0, columnspan=2, pady=5)
+        
         # Train button
         self.train_button = ttk.Button(main_frame, text="Train Network", command=self.start_training)
-        self.train_button.grid(row=3, column=0, columnspan=2, pady=10)
+        self.train_button.grid(row=4, column=0, columnspan=2, pady=5)
         
     def start_training(self):
         try:
