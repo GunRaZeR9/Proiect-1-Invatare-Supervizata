@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 import numpy as np
 import threading
 import queue
@@ -105,3 +105,66 @@ train(X_train, Y_train, weights, learning_rate, epochs)
 
 # Test the neural network
 test(X_test, Y_test, weights)
+
+class NeuralNetworkGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Neural Network Configuration")
+        
+        # Create main frame
+        main_frame = ttk.Frame(root, padding="10")
+        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        # Epochs input
+        ttk.Label(main_frame, text="Epochs:").grid(row=0, column=0, sticky=tk.W, pady=5)
+        self.epochs_var = tk.StringVar(value="9500")
+        self.epochs_entry = ttk.Entry(main_frame, textvariable=self.epochs_var)
+        self.epochs_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), pady=5)
+        
+        # Hidden layers input
+        ttk.Label(main_frame, text="Hidden Layers (x,y,z):").grid(row=1, column=0, sticky=tk.W, pady=5)
+        self.hidden_layers_var = tk.StringVar(value="20,35,40")
+        self.hidden_layers_entry = ttk.Entry(main_frame, textvariable=self.hidden_layers_var)
+        self.hidden_layers_entry.grid(row=1, column=1, sticky=(tk.W, tk.E), pady=5)
+        
+        # Learning rate input
+        ttk.Label(main_frame, text="Learning Rate:").grid(row=2, column=0, sticky=tk.W, pady=5)
+        self.learning_rate_var = tk.StringVar(value="0.002")
+        self.learning_rate_entry = ttk.Entry(main_frame, textvariable=self.learning_rate_var)
+        self.learning_rate_entry.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=5)
+        
+        # Train button
+        self.train_button = ttk.Button(main_frame, text="Train Network", command=self.start_training)
+        self.train_button.grid(row=3, column=0, columnspan=2, pady=10)
+        
+    def start_training(self):
+        try:
+            # Get values from inputs
+            epochs = int(self.epochs_var.get())
+            hidden_layers = [int(x.strip()) for x in self.hidden_layers_var.get().split(',')]
+            learning_rate = float(self.learning_rate_var.get())
+            
+            # Initialize the data and weights
+            global X_train, Y_train, X_test, Y_test, weights
+            X_train, Y_train, X_test, Y_test, weights = initialize(
+                file_path, drop_columns=['Date'], hidden_layer_sizes=hidden_layers
+            )
+            
+            # Train the network
+            train(X_train, Y_train, weights, learning_rate, epochs)
+            
+            # Test the network
+            test(X_test, Y_test, weights)
+            
+            messagebox.showinfo("Training Complete", "Neural network training has completed successfully!")
+            
+        except ValueError as e:
+            messagebox.showerror("Input Error", "Please check your input values. Make sure they are in the correct format.")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+
+# Replace the direct training code at the bottom with this:
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = NeuralNetworkGUI(root)
+    root.mainloop()
